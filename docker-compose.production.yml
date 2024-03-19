@@ -14,7 +14,7 @@ services:
     restart: always
 
   achievements:
-    image: rv369/achievements:latest
+    image: rv369/achievements_backend:latest
     restart: always
     volumes:
       - static_value:/app/static/
@@ -24,7 +24,7 @@ services:
       - .env
 
   nginx:
-    image: rv369/nginx:latest
+    image: rv369/achievements_nginx:latest
     env_file: 
       - .env
     ports:
