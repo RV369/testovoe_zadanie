@@ -1,0 +1,40 @@
+version: '3.3'
+
+volumes:
+  db_value:
+  static_value:
+
+services:
+  db:
+    image: postgres:13
+    volumes:
+      - db_value:/var/lib/postgresql/data/
+    env_file:
+      - .env
+    restart: always
+
+  achievements:
+    build:
+      context: ./achievements/
+      dockerfile: Dockerfile
+    restart: always
+    volumes:
+      - static_value:/app/static/
+    depends_on:
+      - db
+    env_file:
+      - .env
+
+  nginx:
+    build: 
+      context: ./infra/
+      dockerfile: Dockerfile
+    env_file: 
+      - .env
+    ports:
+      - "8000:80"
+    volumes:
+      - static_value:/var/html/static/
+    depends_on:
+      - achievements
+    restart: always
