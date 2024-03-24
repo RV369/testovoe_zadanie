@@ -1,55 +1,33 @@
-from rest_framework import status
-from rest_framework.decorators import api_view
+from rest_framework import viewsets
 from rest_framework.response import Response
+from rest_framework import status
+from django.shortcuts import render
+from datetime import date, timedelta
 
-from .models import Achievement, Person
+from rest_framework.decorators import api_view
+
+
+from .models import Person, Achievement
 from .serializers import (
     AchievementSerializer,
-    PersonCountSerializer,
     PersonSerializer,
+    PersonCountSerializer,
 )
 
 
-@api_view(['GET', 'POST'])
-def achievement_list(request):
-    if request.method == 'POST':
-        serializer = AchievementSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    achievement = Achievement.objects.all()
-    serializer = AchievementSerializer(achievement, many=True)
-    return Response(serializer.data)
+class PersonViewSet(viewsets.ModelViewSet):
+    queryset = Person.objects.all()
+    serializer_class = PersonSerializer
 
 
-@api_view(['GET', 'POST'])
-def person_list(request):
-    if request.method == 'POST':
-        serializer = PersonSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    person = Person.objects.all()
-    serializer = PersonSerializer(person, many=True)
-    return Response(serializer.data)
+class AchievementViewSet(viewsets.ModelViewSet):
+    queryset = Achievement.objects.all()
+    serializer_class = AchievementSerializer
 
 
-@api_view(['GET', 'PUT', 'PATCH', 'DELETE'])
-def person(request, pk):
-    person = Person.objects.get(id=pk)
-    if request.method == 'PUT' or request.method == 'PATCH':
-        serializer = PersonSerializer(person, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    elif request.method == 'DELETE':
-        person.delete()
-        return Response('index.html', status=status.HTTP_204_NO_CONTENT)
-    serializer = PersonSerializer(person)
-    return Response(serializer.data, status=status.HTTP_200_OK)
+class PersonCountViewSet(viewsets.ModelViewSet):
+    queryset = Person.objects.all()
+    serializer_class = PersonCountSerializer
 
 
 @api_view(['GET'])
@@ -57,3 +35,125 @@ def count_person(request):
     person = Person.objects.all()
     serializer = PersonCountSerializer(person)
     return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(['GET', 'DELETE'])
+def data_list(request):
+    if request.method == 'GET':  # and Person.objects.all().count() == 0:
+        # Тестовая персона Маргарита Олеговна разговаривает по английски
+        person = Person.objects.create(
+            person_name='Маргарита Олеговна', language='en',
+        )
+        achievement = Achievement.objects.create(
+            name_achievements='Пустилась в пляс',
+            number_of_points=55,
+            created_on=date.today() - timedelta(1),
+            description='Хорошо станцевала',
+            person=person,
+        )
+        person.achievements.add(
+            achievement, through_defaults={'achievement': achievement},
+        )
+        achievement = Achievement.objects.create(
+            name_achievements='Пустилась в пляс',
+            number_of_points=45,
+            created_on=date.today() - timedelta(1),
+            description='Хорошо станцевала',
+            person=person,
+        )
+        person.achievements.add(
+            achievement, through_defaults={'achievement': achievement},
+        )
+        # Тестовая персона Виктория Олеговна дазговаривает по армянски
+        person = Person.objects.create(
+            person_name='Виктория Олеговна', language='ru',
+        )
+        achievement = Achievement.objects.create(
+            name_achievements='Пустилась в пляс',
+            number_of_points=22,
+            created_on=date.today() - timedelta(1),
+            description='Сдал отчет',
+            person=person,
+        )
+        person.achievements.add(
+            achievement, through_defaults={'achievement': achievement},
+        )
+        # Тестовая персона Анна Ивановна и её 7 достижений
+        person = Person.objects.create(
+            person_name='Анна Ивановна', language='ru',
+        )
+        achievement_1 = Achievement.objects.create(
+            name_achievements='Пустилась в пляс',
+            number_of_points=2,
+            created_on=date.today(),
+            description='Хорошо станцевала',
+            person=person,
+        )
+        achievement_2 = Achievement.objects.create(
+            name_achievements='Пустилась в пляс',
+            number_of_points=20,
+            created_on=date.today() - timedelta(1),
+            description='Хорошо станцевала',
+            person=person,
+        )
+        achievement_3 = Achievement.objects.create(
+            name_achievements='Пустилась в пляс',
+            number_of_points=12,
+            created_on=date.today() - timedelta(2),
+            description='Хорошо станцевала',
+            person=person,
+        )
+        achievement_4 = Achievement.objects.create(
+            name_achievements='Пустилась в пляс',
+            number_of_points=30,
+            created_on=date.today() - timedelta(3),
+            description='Хорошо станцевала',
+            person=person,
+        )
+        achievement_5 = Achievement.objects.create(
+            name_achievements='Пустилась в пляс',
+            number_of_points=5,
+            created_on=date.today() - timedelta(4),
+            description='Хорошо станцевала',
+            person=person,
+        )
+        achievement_6 = Achievement.objects.create(
+            name_achievements='Пустилась в пляс',
+            number_of_points=15,
+            created_on=date.today() - timedelta(5),
+            description='Хорошо станцевала',
+            person=person,
+        )
+        achievement_7 = Achievement.objects.create(
+            name_achievements='Пустилась в пляс',
+            number_of_points=26,
+            created_on=date.today() - timedelta(6),
+            description='Хорошо станцевала',
+            person=person,
+        )
+        person.achievements.add(
+            achievement_1, through_defaults={'achievement': achievement_1},
+        )
+        person.achievements.add(
+            achievement_2, through_defaults={'achievement': achievement_2},
+        )
+        person.achievements.add(
+            achievement_3, through_defaults={'achievement': achievement_3},
+        )
+        person.achievements.add(
+            achievement_4, through_defaults={'achievement': achievement_4},
+        )
+        person.achievements.add(
+            achievement_5, through_defaults={'achievement': achievement_5},
+        )
+        person.achievements.add(
+            achievement_6, through_defaults={'achievement': achievement_6},
+        )
+        person.achievements.add(
+            achievement_7, through_defaults={'achievement': achievement_7},
+        )
+        return render(request, 'index.html')
+    elif request.method == 'DELETE':
+        Person.objects.all().delete()
+        return render(request, 'index.html')
+    return render(request, 'index.html')
