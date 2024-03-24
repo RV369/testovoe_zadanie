@@ -6,11 +6,15 @@ volumes:
 
 services:
   db:
-    image: postgres:13
+    image: alpine:latest
     volumes:
-      - db_value:/var/lib/postgresql/data/
-    env_file:
-      - .env
+      - sqlite_data:/var/lib/sqlite3/db/
+  # db:
+  #   image: postgres:13
+  #   volumes:
+  #     - db_value:/var/lib/postgresql/data/
+  #   env_file:
+  #     - .env
     restart: always
 
   achievements:
