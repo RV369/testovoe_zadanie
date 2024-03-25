@@ -109,10 +109,10 @@ class PersonCountSerializer(serializers.ModelSerializer):
     def get_sum_number_of_points(self, validated_data):
         number_of_points = Person.objects.raw(
             'SELECT d.person_id, a.person_name, a.id, '
-            'MAX(number_of_points) as c'
-            'FROM api_person as a'
-            'INNER JOIN api_achievement as d'
-            'ON d.[person_id]=a.[id]'
+            'MAX(number_of_points) as c '
+            'FROM api_person as a '
+            'INNER JOIN api_achievement as d '
+            'ON d.[person_id]=a.[id] '
             'GROUP BY person_name '
             'ORDER BY c DESC LIMIT 1;',
         )
