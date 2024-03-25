@@ -64,7 +64,7 @@ def data_list(request):
         person.achievements.add(
             achievement, through_defaults={'achievement': achievement},
         )
-        # Тестовая персона Виктория Олеговна дазговаривает по армянски
+        # Тестовая персона Виктория Олеговна
         person = Person.objects.create(
             person_name='Виктория Олеговна', language='ru',
         )

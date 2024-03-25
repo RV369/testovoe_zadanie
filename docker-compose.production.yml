@@ -6,7 +6,10 @@ volumes:
 
 services:
   db:
-    image: alpine:latest
+    image: nouchka/sqlite3:latest
+    stdin_open: true
+    tty: true
+    # image: alpine:latest
     volumes:
       - sqlite_data:/var/lib/sqlite3/db/
   # db:
