@@ -80,7 +80,6 @@ def achievements_for_7_consecutive_days(persons):
             for date_obj in key_data:
                 if str(achievement['created_on'].date()) == date_obj:
                     key += 1
-                    print(key, date_obj)
                     if key == 7:
                         return person['person_name']
                     else:
