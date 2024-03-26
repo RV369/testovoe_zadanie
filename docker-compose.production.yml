@@ -5,19 +5,13 @@ volumes:
   static_value:
 
 services:
+
   db:
-    image: nouchka/sqlite3:latest
-    stdin_open: true
-    tty: true
-    # image: alpine:latest
+    image: postgres:13
     volumes:
-      - sqlite_data:/var/lib/sqlite3/db/
-  # db:
-  #   image: postgres:13
-  #   volumes:
-  #     - db_value:/var/lib/postgresql/data/
-  #   env_file:
-  #     - .env
+      - db_value:/var/lib/postgresql/data/
+    env_file:
+      - .env
     restart: always
 
   achievements:

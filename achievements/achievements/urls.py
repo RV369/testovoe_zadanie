@@ -1,13 +1,12 @@
-from django.contrib import admin
-from django.urls import path, include
 from api.views import (
-    PersonViewSet,
     AchievementViewSet,
+    PersonViewSet,
     count_person,
     data_list,
 )
+from django.contrib import admin
+from django.urls import include, path
 from rest_framework import routers
-
 
 router = routers.DefaultRouter()
 router.register(r'person', PersonViewSet)

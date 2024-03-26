@@ -1,17 +1,15 @@
-from rest_framework import viewsets
-from rest_framework.response import Response
-from rest_framework import status
-from django.shortcuts import render
 from datetime import date, timedelta
 
+from django.shortcuts import redirect
+from rest_framework import status, viewsets
 from rest_framework.decorators import api_view
+from rest_framework.response import Response
 
-
-from .models import Person, Achievement
+from .models import Achievement, Person
 from .serializers import (
     AchievementSerializer,
-    PersonSerializer,
     PersonCountSerializer,
+    PersonSerializer,
 )
 
 
@@ -39,10 +37,11 @@ def count_person(request):
 
 @api_view(['GET', 'DELETE'])
 def data_list(request):
-    if request.method == 'GET':  # and Person.objects.all().count() == 0:
+    if request.method == 'GET' and Person.objects.all().count() == 0:
         # Тестовая персона Маргарита Олеговна разговаривает по английски
         person = Person.objects.create(
-            person_name='Маргарита Олеговна', language='en',
+            person_name='Маргарита Олеговна',
+            language='en',
         )
         achievement = Achievement.objects.create(
             name_achievements='Пустилась в пляс',
@@ -52,7 +51,8 @@ def data_list(request):
             person=person,
         )
         person.achievements.add(
-            achievement, through_defaults={'achievement': achievement},
+            achievement,
+            through_defaults={'achievement': achievement},
         )
         achievement = Achievement.objects.create(
             name_achievements='Пустилась в пляс',
@@ -62,11 +62,13 @@ def data_list(request):
             person=person,
         )
         person.achievements.add(
-            achievement, through_defaults={'achievement': achievement},
+            achievement,
+            through_defaults={'achievement': achievement},
         )
         # Тестовая персона Виктория Олеговна
         person = Person.objects.create(
-            person_name='Виктория Олеговна', language='ru',
+            person_name='Виктория Олеговна',
+            language='ru',
         )
         achievement = Achievement.objects.create(
             name_achievements='Пустилась в пляс',
@@ -76,11 +78,13 @@ def data_list(request):
             person=person,
         )
         person.achievements.add(
-            achievement, through_defaults={'achievement': achievement},
+            achievement,
+            through_defaults={'achievement': achievement},
         )
         # Тестовая персона Анна Ивановна и её 7 достижений
         person = Person.objects.create(
-            person_name='Анна Ивановна', language='ru',
+            person_name='Анна Ивановна',
+            language='ru',
         )
         achievement_1 = Achievement.objects.create(
             name_achievements='Пустилась в пляс',
@@ -132,28 +136,35 @@ def data_list(request):
             person=person,
         )
         person.achievements.add(
-            achievement_1, through_defaults={'achievement': achievement_1},
+            achievement_1,
+            through_defaults={'achievement': achievement_1},
         )
         person.achievements.add(
-            achievement_2, through_defaults={'achievement': achievement_2},
+            achievement_2,
+            through_defaults={'achievement': achievement_2},
         )
         person.achievements.add(
-            achievement_3, through_defaults={'achievement': achievement_3},
+            achievement_3,
+            through_defaults={'achievement': achievement_3},
         )
         person.achievements.add(
-            achievement_4, through_defaults={'achievement': achievement_4},
+            achievement_4,
+            through_defaults={'achievement': achievement_4},
         )
         person.achievements.add(
-            achievement_5, through_defaults={'achievement': achievement_5},
+            achievement_5,
+            through_defaults={'achievement': achievement_5},
         )
         person.achievements.add(
-            achievement_6, through_defaults={'achievement': achievement_6},
+            achievement_6,
+            through_defaults={'achievement': achievement_6},
         )
         person.achievements.add(
-            achievement_7, through_defaults={'achievement': achievement_7},
+            achievement_7,
+            through_defaults={'achievement': achievement_7},
         )
-        return render(request, 'index.html')
+        return redirect('/api/person/')
     elif request.method == 'DELETE':
         Person.objects.all().delete()
-        return render(request, 'index.html')
-    return render(request, 'index.html')
+        return redirect('/api/person/')
+    return redirect('/api/person/')

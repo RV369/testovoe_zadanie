@@ -1,6 +1,11 @@
+from api.core_processor import (
+    achievements_for_7_consecutive_days,
+    list_person,
+    max_difference_in_achievement_points,
+    string_translate,
+)
 from api.models import Achievement, AchievementPerson, Person
 from rest_framework import serializers
-from api.core_processor import string_translate
 
 
 class AchievementSerializer(serializers.ModelSerializer):
@@ -27,7 +32,6 @@ class AchievementBuiltInSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Achievement
-        # fields = '__all__'
         fields = (
             'pk',
             'name_achievements',
@@ -40,7 +44,8 @@ class AchievementBuiltInSerializer(serializers.ModelSerializer):
         name_achievements = validated_data.name_achievements
         if validated_data.person.language != 'ru':
             return string_translate(
-                name_achievements, validated_data.person.language,
+                name_achievements,
+                validated_data.person.language,
             )
         return name_achievements
 
@@ -48,7 +53,8 @@ class AchievementBuiltInSerializer(serializers.ModelSerializer):
         description = validated_data.description
         if validated_data.person.language != 'ru':
             return string_translate(
-                description, validated_data.person.language,
+                description,
+                validated_data.person.language,
             )
         return description
 
@@ -91,91 +97,28 @@ class PersonCountSerializer(serializers.ModelSerializer):
         )
 
     def get_achievements_max_count(self, validated_data):
-        max_count = Person.objects.raw(
-            'SELECT d.person_id, a.id, COUNT(*) as c '
-            'FROM api_person as a '
-            'INNER JOIN api_achievementperson as d '
-            'ON d.[person_id] = a.[id]'
-            'GROUP BY person_name '
-            'ORDER BY c DESC LIMIT 1;',
-        )
-        for person in max_count:
-            person.person_name
-        try:
-            return str(person.person_name)
-        except UnboundLocalError as e:
-            return 'Отсутствуют данные: ' + str(e)
+        persons = list_person(validated_data)
+        persons.sort(key=lambda x: x.get('achievements_count'))
+        return persons[-1]['person_name']
 
     def get_sum_number_of_points(self, validated_data):
-        number_of_points = Person.objects.raw(
-            'SELECT d.person_id, a.person_name, a.id, '
-            'MAX(number_of_points) as c '
-            'FROM api_person as a '
-            'INNER JOIN api_achievement as d '
-            'ON d.[person_id]=a.[id] '
-            'GROUP BY person_name '
-            'ORDER BY c DESC LIMIT 1;',
-        )
-        for person in number_of_points:
-            person.person_name
-        try:
-            return str(person.person_name)
-        except UnboundLocalError as e:
-            return 'Отсутствуют данные: ' + str(e)
+        persons = list_person(validated_data)
+        persons.sort(key=lambda x: x.get('sum_number_of_points'))
+        return persons[-1]['person_name']
 
     def get_max_difference_in_achievement_points(self, validated_data):
-        difference_number_of_points = Person.objects.raw(
-            'SELECT d.person_id, a.person_name, a.id,'
-            'MAX(number_of_points) - MIN(number_of_points) as c'
-            'FROM api_person as a'
-            'INNER JOIN api_achievement as d'
-            'on d.[person_id]=a.[id]'
-            'GROUP BY person_name'
-            'ORDER BY c DESC LIMIT 1;',
+        persons = max_difference_in_achievement_points(
+            list_person(validated_data),
         )
-        for person in difference_number_of_points:
-            person.person_name
-        try:
-            return str(person.person_name)
-        except UnboundLocalError as e:
-            return 'Отсутствуют данные: ' + str(e)
+        persons.sort(key=lambda x: x.get('number'))
+        return persons[-1]['person_name']
 
     def get_min_difference_in_achievement_points(self, validated_data):
-        difference_number_of_points = Person.objects.raw(
-            'SELECT d.person_id, a.person_name, a.id,'
-            'MAX(number_of_points) - MIN(number_of_points) as c'
-            'FROM api_person as a'
-            'INNER JOIN api_achievement as d'
-            'on d.[person_id]=a.[id]'
-            'GROUP BY person_name'
-            'ORDER BY c LIMIT 1;',
+        persons = max_difference_in_achievement_points(
+            list_person(validated_data),
         )
-        for person in difference_number_of_points:
-            person.person_name
-        try:
-            return str(person.person_name)
-        except UnboundLocalError as e:
-            return 'Отсутствуют данные: ' + str(e)
+        persons.sort(key=lambda x: x.get('number'))
+        return persons[0]['person_name']
 
     def get_achievements_for_7_consecutive_days(self, validated_data):
-        difference_number_of_points = Person.objects.raw(
-            'SELECT a.person_name, a.id, d.created_on, COUNT(*) as c'
-            'FROM api_person as a '
-            'INNER JOIN api_achievement as d'
-            'ON d.[person_id]=a.[id]'
-            'WHERE d.created_on >= CURRENT_DATE - 7'
-            'AND d.created_on >= CURRENT_DATE - 1'
-            'AND d.created_on >= CURRENT_DATE - 2'
-            'AND d.created_on >= CURRENT_DATE - 3'
-            'AND d.created_on >= CURRENT_DATE - 4'
-            'AND d.created_on >= CURRENT_DATE - 5'
-            'AND d.created_on >= CURRENT_DATE - 6'
-            'GROUP BY person_name'
-            'ORDER BY c DESC LIMIT 1;',
-        )
-        for person in difference_number_of_points:
-            person.person_name
-        try:
-            return str(person.person_name)
-        except UnboundLocalError as e:
-            return 'Отсутствуют данные: ' + str(e)
+        return achievements_for_7_consecutive_days(list_person(validated_data))
