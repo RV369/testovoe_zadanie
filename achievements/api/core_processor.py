@@ -65,7 +65,9 @@ def max_difference_in_achievement_points(persons):
 
 
 def achievements_for_7_consecutive_days(persons):
-    key_data = [
+    for person in persons:
+        key = 0
+        key_data = [
         str(date.today()),
         str(date.today() - timedelta(1)),
         str(date.today() - timedelta(2)),
@@ -73,13 +75,12 @@ def achievements_for_7_consecutive_days(persons):
         str(date.today() - timedelta(4)),
         str(date.today() - timedelta(5)),
         str(date.today() - timedelta(6)),
-    ]
-    for person in persons:
-        key = 0
+        ]
         for achievement in person['achievements']:
             for date_obj in key_data:
                 if str(achievement['created_on'].date()) == date_obj:
                     key += 1
+                    key_data.remove(date_obj)
                     if key == 7:
                         return person['person_name']
                     else:

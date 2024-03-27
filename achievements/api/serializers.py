@@ -99,11 +99,15 @@ class PersonCountSerializer(serializers.ModelSerializer):
     def get_achievements_max_count(self, validated_data):
         persons = list_person(validated_data)
         persons.sort(key=lambda x: x.get('achievements_count'))
+        if persons == []:
+            return 'Отсутствуют данные в базе данных'
         return persons[-1]['person_name']
 
     def get_sum_number_of_points(self, validated_data):
         persons = list_person(validated_data)
         persons.sort(key=lambda x: x.get('sum_number_of_points'))
+        if persons == []:
+            return 'Отсутствуют данные в базе данных'
         return persons[-1]['person_name']
 
     def get_max_difference_in_achievement_points(self, validated_data):
@@ -111,6 +115,8 @@ class PersonCountSerializer(serializers.ModelSerializer):
             list_person(validated_data),
         )
         persons.sort(key=lambda x: x.get('number'))
+        if persons == []:
+            return 'Отсутствуют данные в базе данных'
         return persons[-1]['person_name']
 
     def get_min_difference_in_achievement_points(self, validated_data):
@@ -118,6 +124,8 @@ class PersonCountSerializer(serializers.ModelSerializer):
             list_person(validated_data),
         )
         persons.sort(key=lambda x: x.get('number'))
+        if persons == []:
+            return 'Отсутствуют данные в базе данных'
         return persons[0]['person_name']
 
     def get_achievements_for_7_consecutive_days(self, validated_data):
