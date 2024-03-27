@@ -79,6 +79,12 @@ class PersonSerializer(serializers.ModelSerializer):
         return person_name
 
 
+class PersonCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Person
+        fields = '__all__'
+
+
 class PersonCountSerializer(serializers.ModelSerializer):
     achievements_max_count = serializers.SerializerMethodField()
     sum_number_of_points = serializers.SerializerMethodField()

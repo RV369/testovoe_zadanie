@@ -1,6 +1,6 @@
 from datetime import date, timedelta
 
-from api.models import Achievement
+from api.models import Achievement, Person
 from googletrans import Translator
 
 translator = Translator()
@@ -68,13 +68,13 @@ def achievements_for_7_consecutive_days(persons):
     for person in persons:
         key = 0
         key_data = [
-        str(date.today()),
-        str(date.today() - timedelta(1)),
-        str(date.today() - timedelta(2)),
-        str(date.today() - timedelta(3)),
-        str(date.today() - timedelta(4)),
-        str(date.today() - timedelta(5)),
-        str(date.today() - timedelta(6)),
+            str(date.today()),
+            str(date.today() - timedelta(1)),
+            str(date.today() - timedelta(2)),
+            str(date.today() - timedelta(3)),
+            str(date.today() - timedelta(4)),
+            str(date.today() - timedelta(5)),
+            str(date.today() - timedelta(6)),
         ]
         for achievement in person['achievements']:
             for date_obj in key_data:
@@ -86,3 +86,165 @@ def achievements_for_7_consecutive_days(persons):
                     else:
                         continue
     return 'Сегодня нет победительницы в этой категории'
+
+
+def create_data():
+    person = Person.objects.create(
+        person_name='Маргарита Олеговна',
+        language='en',
+    )
+    achievement = Achievement.objects.create(
+        name_achievements='Пустилась в пляс',
+        number_of_points=55,
+        created_on=date.today() - timedelta(1),
+        description='Хорошо станцевала',
+        person=person,
+    )
+    person.achievements.add(
+        achievement,
+        through_defaults={'achievement': achievement},
+    )
+    achievement = Achievement.objects.create(
+        name_achievements='Пустилась в пляс',
+        number_of_points=45,
+        created_on=date.today() - timedelta(1),
+        description='Хорошо станцевала',
+        person=person,
+    )
+    person.achievements.add(
+        achievement,
+        through_defaults={'achievement': achievement},
+    )
+    person = Person.objects.create(
+        person_name='Маргарита Михайловна',
+        language='ru',
+    )
+    achievement = Achievement.objects.create(
+        name_achievements='Пустилась в пляс',
+        number_of_points=22,
+        created_on=date.today() - timedelta(1),
+        description='Сдал отчет',
+        person=person,
+    )
+    person.achievements.add(
+        achievement,
+        through_defaults={'achievement': achievement},
+    )
+    achievement = Achievement.objects.create(
+        name_achievements='Пустилась в пляс',
+        number_of_points=22,
+        created_on=date.today() - timedelta(1),
+        description='Сдал отчет',
+        person=person,
+    )
+    person.achievements.add(
+        achievement,
+        through_defaults={'achievement': achievement},
+    )
+    achievement = Achievement.objects.create(
+        name_achievements='Пустилась в пляс',
+        number_of_points=22,
+        created_on=date.today() - timedelta(8),
+        description='Сдал отчет',
+        person=person,
+    )
+    person.achievements.add(
+        achievement,
+        through_defaults={'achievement': achievement},
+    )
+    person = Person.objects.create(
+        person_name='Виктория Олеговна',
+        language='ru',
+    )
+    achievement = Achievement.objects.create(
+        name_achievements='Пустилась в пляс',
+        number_of_points=22,
+        created_on=date.today() - timedelta(3),
+        description='Сдал отчет',
+        person=person,
+    )
+    person.achievements.add(
+        achievement,
+        through_defaults={'achievement': achievement},
+    )
+    person = Person.objects.create(
+        person_name='Анна Ивановна',
+        language='ru',
+    )
+    achievement_1 = Achievement.objects.create(
+        name_achievements='Пустилась в пляс',
+        number_of_points=2,
+        created_on=date.today(),
+        description='Хорошо станцевала',
+        person=person,
+    )
+    achievement_2 = Achievement.objects.create(
+        name_achievements='Пустилась в пляс',
+        number_of_points=20,
+        created_on=date.today() - timedelta(1),
+        description='Хорошо станцевала',
+        person=person,
+    )
+    achievement_3 = Achievement.objects.create(
+        name_achievements='Пустилась в пляс',
+        number_of_points=12,
+        created_on=date.today() - timedelta(2),
+        description='Хорошо станцевала',
+        person=person,
+    )
+    achievement_4 = Achievement.objects.create(
+        name_achievements='Пустилась в пляс',
+        number_of_points=30,
+        created_on=date.today() - timedelta(3),
+        description='Хорошо станцевала',
+        person=person,
+    )
+    achievement_5 = Achievement.objects.create(
+        name_achievements='Пустилась в пляс',
+        number_of_points=5,
+        created_on=date.today() - timedelta(4),
+        description='Хорошо станцевала',
+        person=person,
+    )
+    achievement_6 = Achievement.objects.create(
+        name_achievements='Пустилась в пляс',
+        number_of_points=15,
+        created_on=date.today() - timedelta(5),
+        description='Хорошо станцевала',
+        person=person,
+    )
+    achievement_7 = Achievement.objects.create(
+        name_achievements='Пустилась в пляс',
+        number_of_points=26,
+        created_on=date.today() - timedelta(6),
+        description='Хорошо станцевала',
+        person=person,
+    )
+    person.achievements.add(
+        achievement_1,
+        through_defaults={'achievement': achievement_1},
+    )
+    person.achievements.add(
+        achievement_2,
+        through_defaults={'achievement': achievement_2},
+    )
+    person.achievements.add(
+        achievement_3,
+        through_defaults={'achievement': achievement_3},
+    )
+    person.achievements.add(
+        achievement_4,
+        through_defaults={'achievement': achievement_4},
+    )
+    person.achievements.add(
+        achievement_5,
+        through_defaults={'achievement': achievement_5},
+    )
+    person.achievements.add(
+        achievement_6,
+        through_defaults={'achievement': achievement_6},
+    )
+    person.achievements.add(
+        achievement_7,
+        through_defaults={'achievement': achievement_7},
+    )
